@@ -1,9 +1,6 @@
 
 from web3 import Web3, Account
-
-
-def print_(x): return print(">>> {}".format(x))
-
+from account import AccountWarpper
 
 class AccountManager(object):
     def __init__(self, mnemonic="",
@@ -11,9 +8,10 @@ class AccountManager(object):
                  password=""):
         self.mnemonic = mnemonic
         self.derive_path_format = derive_path_format if derive_path_format != "" else "m/40'/60'/0'/0/{}"
-        self.accounts = []
+        self.accounts: list = []
         self.password = password
         self.extra = {}
+        self.warppers = []
 
     def get_account(self, index=0) -> Account:
         if index > len(self.accounts)-1:
@@ -21,19 +19,25 @@ class AccountManager(object):
                 f'the index {index} is exceed total account num {len(self.accounts)}.')
         return self.accounts[index]
 
-    def create_account(self, count=1, verbose=False):
+    def create_account(self, count=1, verbose=False, with_bech32_extension=False):
         for i in range(count):
             idx = len(self.accounts)
             derive_path = self.derive_path_format.format(idx)
             evm_account = Account.from_mnemonic(
                 mnemonic=self.mnemonic, account_path=derive_path,
                 passphrase=self.password)
+            warpper = AccountWarpper(evm_account=evm_account)
+            if with_bech32_extension:
+                warpper.with_bech32_accounts()
+
             if verbose:
+                print(warpper)
                 print("{},{},{},{}".format(idx, evm_account.address,
                       evm_account.key.hex(), derive_path))
             # print_("#{} generated new account by path {}".format(i, derive_path))
             # print_("\t\t\t Public key: {}".format(evm_account.address))
             self.accounts.append(evm_account)
+            self.warppers.append(warpper)
         return self.accounts
 
     def export_dict(self):
@@ -73,3 +77,11 @@ class AccountManager(object):
                     self.accounts[i].address), "ether")
                 if verbose:
                     print("#    {:.5f} ETH on [{}]".format(balance, name))
+
+
+
+if __name__ == "__main__":
+    acc, mnemonic = Account.create_with_mnemonic()
+    am = AccountManager(mnemonic=mnemonic)
+    am.create_account(10, verbose=True, with_bech32_extension=True)
+    

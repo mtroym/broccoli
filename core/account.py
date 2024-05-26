@@ -50,6 +50,13 @@ class AccountWarpper:
             func(self)
 
 
+    def with_bech32_accounts(self):
+        self.exec_extension([
+            cosmos_extension, 
+            evmos_extension,
+            # lambda x: bech32_extension(x, hrp="", evm_compatible=False)
+        ])
+
 def bech32_extension(waccount: AccountWarpper, hrp: str = "cosmos", evm_compatible=False):
     if not evm_compatible:
         pubbytes = waccount.public_key_obj.format(compressed=True)
