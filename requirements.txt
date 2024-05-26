@@ -3,3 +3,4 @@ ecdsa
 hdwallets 
 mnemonic
 autopep8
+coincurve
