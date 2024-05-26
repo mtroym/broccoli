@@ -10,7 +10,7 @@ Account.enable_unaudited_hdwallet_features()
 
 class AccountWarpper:
     def __init__(self, evm_account: Account):
-        self.evm_account: Account = evm_account
+        self.account: Account = evm_account
 
         self.private_key: PrivateKey = evm_account._key_obj
         self.private_key_bytes = self.private_key.to_bytes()

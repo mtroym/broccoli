@@ -1,6 +1,6 @@
 
 from web3 import Web3, Account
-from account import AccountWarpper
+from .account import AccountWarpper
 
 
 class AccountManager(object):
