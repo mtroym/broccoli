@@ -49,13 +49,13 @@ class AccountWarpper:
         for func in extension_funcs:
             func(self)
 
-
     def with_bech32_accounts(self):
         self.exec_extension([
-            cosmos_extension, 
+            cosmos_extension,
             evmos_extension,
             # lambda x: bech32_extension(x, hrp="", evm_compatible=False)
         ])
+
 
 def bech32_extension(waccount: AccountWarpper, hrp: str = "cosmos", evm_compatible=False):
     if not evm_compatible:

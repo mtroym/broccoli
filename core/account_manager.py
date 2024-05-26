@@ -2,6 +2,7 @@
 from web3 import Web3, Account
 from account import AccountWarpper
 
+
 class AccountManager(object):
     def __init__(self, mnemonic="",
                  derive_path_format: str = "",
@@ -79,9 +80,7 @@ class AccountManager(object):
                     print("#    {:.5f} ETH on [{}]".format(balance, name))
 
 
-
 if __name__ == "__main__":
     acc, mnemonic = Account.create_with_mnemonic()
     am = AccountManager(mnemonic=mnemonic)
     am.create_account(10, verbose=True, with_bech32_extension=True)
-    
