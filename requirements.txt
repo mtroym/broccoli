@@ -4,3 +4,4 @@ hdwallets
 mnemonic
 autopep8
 coincurve
+bip39

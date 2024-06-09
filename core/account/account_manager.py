@@ -20,21 +20,30 @@ class AccountManager(object):
                 f'the index {index} is exceed total account num {len(self.accounts)}.')
         return self.accounts[index]
 
-    def create_account(self, count=1, verbose=False, with_bech32_extension=False):
+    def create_account(self, count=1, verbose=False, 
+                       with_bech32_extensions=False,
+                       with_substrate_extenstions=False):
         for i in range(count):
             idx = len(self.accounts)
             derive_path = self.derive_path_format.format(idx)
-            evm_account = Account.from_mnemonic(
-                mnemonic=self.mnemonic, account_path=derive_path,
-                passphrase=self.password)
-            warpper = AccountWarpper(evm_account=evm_account)
-            if with_bech32_extension:
+            # evm_account = Account.from_mnemonic(
+            #     mnemonic=self.mnemonic, account_path=derive_path,
+            #     passphrase=self.password)
+            warpper = AccountWarpper(mnemonic=self.mnemonic, 
+                                     passphrase=self.password, 
+                                     derive_path=derive_path)
+            
+            evm_account = warpper.account
+            if with_bech32_extensions:
                 warpper.with_bech32_accounts()
+            if with_substrate_extenstions:
+                warpper.with_substrate_accounts()
 
             if verbose:
                 print(warpper)
-                print("{},{},{},{}".format(idx, evm_account.address,
-                      evm_account.key.hex(), derive_path))
+                print()
+                # print("{},{},{},{}".format(idx, evm_account.address,
+                #       evm_account.key.hex(), derive_path))
             # print_("#{} generated new account by path {}".format(i, derive_path))
             # print_("\t\t\t Public key: {}".format(evm_account.address))
             self.accounts.append(evm_account)
@@ -83,4 +92,4 @@ class AccountManager(object):
 if __name__ == "__main__":
     acc, mnemonic = Account.create_with_mnemonic()
     am = AccountManager(mnemonic=mnemonic)
-    am.create_account(10, verbose=True, with_bech32_extension=True)
+    am.create_account(10, verbose=True, with_bech32_extensions=True)
