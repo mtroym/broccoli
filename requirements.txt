@@ -4,4 +4,5 @@ hdwallets
 mnemonic
 autopep8
 coincurve
-bip39
+py-bip39-bindings
+substrate-interface
