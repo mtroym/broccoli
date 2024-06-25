@@ -20,7 +20,7 @@ class AccountManager(object):
                 f'the index {index} is exceed total account num {len(self.accounts)}.')
         return self.accounts[index]
 
-    def create_account(self, count=1, verbose=False, 
+    def create_account(self, count=1, verbose=False,
                        with_bech32_extensions=False,
                        with_substrate_extenstions=False):
         for i in range(count):
@@ -29,10 +29,10 @@ class AccountManager(object):
             # evm_account = Account.from_mnemonic(
             #     mnemonic=self.mnemonic, account_path=derive_path,
             #     passphrase=self.password)
-            warpper = AccountWarpper(mnemonic=self.mnemonic, 
-                                     passphrase=self.password, 
+            warpper = AccountWarpper(mnemonic=self.mnemonic,
+                                     passphrase=self.password,
                                      derive_path=derive_path)
-            
+
             evm_account = warpper.account
             if with_bech32_extensions:
                 warpper.with_bech32_accounts()
