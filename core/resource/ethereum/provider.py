@@ -17,7 +17,7 @@ class ProviderWarpper:
         self.name = conf.get("name", conf.get(
             "chain_id", "evm_chain-{}".format(self.chain_id)))
         
-        assert self.chain_id == conf.get("chain_id"), \
+        assert self.chain_id == conf.get("chain_id", self.chain_id), \
             "chain id not match, remote: {}, config: {}".format(self.chain_id, conf.get("chain_id"))
 
 
@@ -30,8 +30,6 @@ class Web3RPCProvider(object):
         for conf in network_conf.get("networks", []):
             p = ProviderWarpper(conf)
             self.Rpcs[p.name] = p
-            
-
 
 
 if __name__ == "__main__":
