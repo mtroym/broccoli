@@ -1,7 +1,6 @@
 
 from eth_account.hdaccount import generate_mnemonic
-from core.account.account_manager import AccountManager
-
+from core.resource import AccountManager
 
 if __name__ == "__main__":
     mnemonic = generate_mnemonic(num_words=24, lang="english")
