@@ -10,6 +10,18 @@ from substrateinterface import Keypair
 Account.enable_unaudited_hdwallet_features()
 
 
+def get_keys(account: LocalAccount):
+    private_key: PrivateKey = account._key_obj
+    public_key: PublicKey = private_key.public_key
+    public_key_bytes = public_key.to_bytes()
+    point = (
+        big_endian_to_int(public_key_bytes[:32]),
+        big_endian_to_int(public_key_bytes[32:])
+    )
+    public_key_obj: PublicKey = PublicKey.from_point(*point)
+    return private_key, public_key_obj
+
+
 class AccountWarpper:
     def __init__(self,
                  mnemonic: str = "",
@@ -69,6 +81,7 @@ class AccountWarpper:
         self.exec_extension([
             cosmos_extension,
             evmos_extension,
+            nubit_extension,
             # lambda x: bech32_extension(x, hrp="", evm_compatible=False)
         ])
 
@@ -79,12 +92,28 @@ class AccountWarpper:
         ])
 
 
-def bech32_extension(waccount: AccountWarpper,
-                     hrp: str = "cosmos",
-                     evm_compatible=False):
-
+def bech32_extension(
+    waccount: AccountWarpper,
+    hrp: str = "nubit",
+    evm_compatible=False,
+    purpose=40,
+    coin_type=60,
+):
     if not evm_compatible:
-        pubbytes = waccount.public_key_obj.format(compressed=True)
+        derive_acc = waccount
+        pubkey_obj = waccount.public_key_obj
+        if purpose != 40 or coin_type != 60:
+            # self defined purpose and coin types.
+            account_path = "m/{}'/{}'/0'/0/{}".format(purpose, coin_type, 0)
+            derive_acc = Account.from_mnemonic(
+                mnemonic=waccount.mnemonic,
+                account_path=account_path,
+                passphrase=waccount.passphrase
+            )
+            pk, pubkey_obj = get_keys(derive_acc)
+            waccount.derived_accounts[hrp + "/p"] = account_path
+            waccount.derived_accounts[hrp + "/pk"] = pk
+        pubbytes = pubkey_obj.format(compressed=True)
         s = hashlib.new("sha256", pubbytes).digest()
         r = hashlib.new("ripemd160", s).digest()
     else:
@@ -94,6 +123,7 @@ def bech32_extension(waccount: AccountWarpper,
     assert five_bit_r is not None
     waccount.derived_accounts[hrp] = \
         bech32.bech32_encode(hrp, five_bit_r)
+    
     return waccount.derived_accounts[hrp]
 
 
@@ -114,6 +144,7 @@ def substrate_extension(waccount: AccountWarpper, ss58_format: int = 42):
 def cosmos_extension(x): return bech32_extension(x, "cosmos")
 def evmos_extension(x): return bech32_extension(x, "evmos", True)
 def evmos_extension(x): return bech32_extension(x, "nillion", False)
+def nubit_extension(x): return bech32_extension(x, "nubit", False, 44, 118)
 def kusama_extension(x): return substrate_extension(x, 2)
 def polkadot_extension(x): return substrate_extension(x, 0)
 
