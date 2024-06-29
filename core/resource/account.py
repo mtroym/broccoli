@@ -143,17 +143,18 @@ def substrate_extension(waccount: AccountWarpper, ss58_format: int = 42):
 
 def cosmos_extension(x): return bech32_extension(x, "cosmos")
 def evmos_extension(x): return bech32_extension(x, "evmos", True)
-def evmos_extension(x): return bech32_extension(x, "nillion", False)
+def nillion_extension(x): return bech32_extension(x, "nillion", False)
 def nubit_extension(x): return bech32_extension(x, "nubit", False, 44, 118)
 def kusama_extension(x): return substrate_extension(x, 2)
 def polkadot_extension(x): return substrate_extension(x, 0)
 
 
 if __name__ == "__main__":
-    acc, mnemonic = Account.create_with_mnemonic(num_words=24)
+    # acc, mnemonic = Account.create_with_mnemonic(num_words=24)
+    mnemonic = "aerobic goat foster hint pyramid van cruise behind swear vibrant skull add message exhaust turn chief stable civil banana across fold eye envelope page"
     wacc = AccountWarpper(mnemonic=mnemonic)
-    wacc.exec_extension(
-        [substrate_extension, kusama_extension, polkadot_extension])
+    # wacc.exec_extension(
+    #     [substrate_extension, kusama_extension, polkadot_extension])
     wacc.with_bech32_accounts()
 
     print(wacc)
