@@ -123,7 +123,7 @@ def bech32_extension(
     assert five_bit_r is not None
     waccount.derived_accounts[hrp] = \
         bech32.bech32_encode(hrp, five_bit_r)
-    
+
     return waccount.derived_accounts[hrp]
 
 

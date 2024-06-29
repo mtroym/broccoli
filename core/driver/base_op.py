@@ -5,17 +5,18 @@ class BaseOp(object):
 
     def before(self):
         raise NotImplementedError()
-    
+
     def run(self):
         raise NotImplementedError()
-    
+
     def after(self):
         raise NotImplementedError()
-    
+
     def __call__(self):
         self.before()
         self.run()
         self.after()
+
 
 class ExampleOp(BaseOp):
     def __init__(self, name) -> None:
@@ -29,6 +30,7 @@ class ExampleOp(BaseOp):
 
     def after(self):
         print("after call, store state")
+
 
 if __name__ == "__main__":
     op = ExampleOp("example")
