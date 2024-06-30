@@ -37,7 +37,12 @@ class Web3RPCProvider(object):
 if __name__ == "__main__":
     import json
     import dotenv
+    from tabulate import tabulate
     dotenv.load_dotenv(".env", verbose=True)
     rpcs = Web3RPCProvider(json.load(open("configs/networks.json", "r")))
-    for rpc_name, rpc in rpcs.Rpcs.items():
-        print(rpc.name, rpc.chain_id, rpc.endpoint_uri)
+    table_member = ["name", "chain_id", "description"]
+    rows = [
+        [rpc.__getattribute__(n) for n in table_member] 
+        for (_, rpc) in rpcs.Rpcs.items()
+    ]
+    print(tabulate(rows,headers=table_member))
